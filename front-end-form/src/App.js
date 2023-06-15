@@ -1,22 +1,23 @@
 import io from 'socket.io-client';
 import { useState, useEffect, useRef } from 'react'
 import TextField from './TextField';
-import formFields  from './formFields'
+//  import formFields  from './formFieldsLoadTest'
 
-// const formFields = [{ fieldKey: "invoiceValue", type: "textfield", fieldName: "Invoice value" }, { fieldKey: "freightValue", type: "textfield", fieldName: "Freight value" }, { fieldKey: "insuranceValue", type: "textfield", fieldName: "Insurance value" }]
+const formFields = [{ fieldKey: "invoiceValue", type: "textfield", fieldName: "Invoice value" }, { fieldKey: "freightValue", type: "textfield", fieldName: "Freight value" }, { fieldKey: "insuranceValue", type: "textfield", fieldName: "Insurance value" }]
 
 const page_style = {
   width: "100vw",
   height: "100vh",
   overFlowY:"scroll",
-  // display: "flex",
-  // flexDirection: "column",
-  // alignItems: "center",
-  // justifyContent: "center"
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center"
 }
 
 const form_component_style = {
   display: "flex",
+  marginTop: "1.5em"
 }
 
 const label_component_style = {
