@@ -12,7 +12,8 @@ const page_style = {
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  justifyContent: "center"
+  justifyContent: "center",
+  position:"relative"
 }
 
 const form_component_style = {
@@ -22,6 +23,15 @@ const form_component_style = {
 
 const label_component_style = {
   marginRight: "1.5em"
+}
+
+const footer_component_style = {
+  position:"absolute",
+  width:"100%",
+  bottom:0,
+  height:"2vh",
+  display:"flex",
+  justifyContent:"center"
 }
 
 
@@ -62,8 +72,9 @@ function App() {
           )
         }
       })}
-
+      <footer style={footer_component_style}>Developed with ❤️ at YBL</footer>
     </div>
+    
   );
 }
 
