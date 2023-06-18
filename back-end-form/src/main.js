@@ -15,7 +15,17 @@ const initHttp = async () => {
         }
     })
 
-    //routes
+    //web socket
+    const io = SocketIO(server.listener, {
+        cors: {
+            origin: ["*"],
+          methods: ["GET", "POST"]
+        }
+      })
+
+      webSocket(io)
+
+    //http routes
     server.route(health)
 
     await server.start()
@@ -28,34 +38,3 @@ process.on('unhandledRejection', (err) => {
 })
 
 initHttp()
-
-const initWebsockets = async () => {
-    const server = Hapi.server({
-        port : config.websocketServerconfig.listenPort ,
-        host: config.websocketServerconfig.listenHost,
-        routes:{
-            cors:{
-                origin:["*"]
-            }
-        }
-    })
-
-    const io = SocketIO(server.listener, {
-        cors: {
-            origin: ["*"],
-          methods: ["GET", "POST"]
-        }
-      })
-
-      webSocket(io)
-
-    await server.start()
-    console.log(`Websocket server running on ${server.info.uri}`)
-}
-
-process.on('unhandledRejection', (err) => {
-    console.log("Problem while starting the server: " + err)
-    process.exit(1)
-})
-
-initWebsockets()
