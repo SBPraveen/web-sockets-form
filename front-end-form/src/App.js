@@ -35,7 +35,7 @@ function App() {
 
   let socket = useRef(null);
   useEffect(() => {
-    socket.current = io("http://wss123-alb-sg-347897934.ap-south-1.elb.amazonaws.com/", {
+    socket.current = io("https://cherrybeee.com", {
       transports: ["websocket"],
       autoConnect: false
     });
