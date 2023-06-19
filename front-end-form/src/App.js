@@ -72,7 +72,7 @@ function App() {
           )
         }
       })}
-      <footer style={footer_component_style}>Developed with ❤️ at YBL</footer>
+      <footer style={footer_component_style}>Developed with ❤️ by yesBeee</footer>
     </div>
     
   );
