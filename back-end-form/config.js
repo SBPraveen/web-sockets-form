@@ -7,6 +7,6 @@ module.exports = {
         listenPort: 8080,
         listenHost: "0.0.0.0"
     },
-    cors: process.env.RUNNING_ENV === "cloud" ? process.env.API_URL : "*",
-    apiUrl: process.env.API_URL
+    kafkaUrl:process.env.KAFKA,
+    redisUrl:process.env.REDIS
 }

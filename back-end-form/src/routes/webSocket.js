@@ -1,7 +1,9 @@
- const webSocket = (io) => {
+ const webSocket = (io, serverId) => {
     io.on('connection', (socket) => {
         console.log('connected and no of clients connected', io.engine.clientsCount);  
 
+        socket.emit("serverId", serverId)
+        
         socket.on('join', (roomId) => {
             console.log(roomId);
             socket.join(roomId)

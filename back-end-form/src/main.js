@@ -23,13 +23,13 @@ const initHttp = async () => {
         }
       })
 
-      webSocket(io)
+      webSocket(io, server.info.id)
 
     //http routes
     server.route(health)
 
     await server.start()
-    console.log(`Server running on ${server.info.uri}`)
+    console.log(`Server running on ${server.info.uri} and server id is ${server.info.id}`)
 }
 
 process.on('unhandledRejection', (err) => {

@@ -10,11 +10,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@hapi/hapi": "^21.3.2",
-    "dotenv": "^16.0.3",
-    "socket.io": "^4.6.1",
     "@babel/cli": "^7.21.5",
     "@babel/core": "^7.21.5",
-    "@babel/preset-env": "^7.21.5"
+    "@babel/preset-env": "^7.21.5",
+    "@hapi/hapi": "^21.3.2",
+    "dotenv": "^16.0.3",
+    "kafkajs": "^2.2.4",
+    "redis": "^4.6.7",
+    "socket.io": "^4.6.1"
   }
 }

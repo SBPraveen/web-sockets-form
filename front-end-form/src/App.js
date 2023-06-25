@@ -33,19 +33,29 @@ const footer_component_style = {
   display:"flex",
   justifyContent:"center"
 }
+const header_component_style = {
+  position:"absolute",
+  width:"100%",
+  top:0,
+  height:"2vh",
+  display:"flex",
+  justifyContent:"center",
+  marginTop: "1vh"
+}
 
 
 function App() {
   
   //!Check disable is working when websocket connection is lost
   const [disableFields, setDisableFields] = useState(true)
+  const [serverId, setServerId] = useState("")
 
   const jobId = "1234ASDF1234"
   const invoiceId = "1111"
 
   let socket = useRef(null);
   useEffect(() => {
-    socket.current = io("https://cherrybeee.com", {
+    socket.current = io(process.env.REACT_APP_API_URL, {
       transports: ["websocket"],
       autoConnect: false
     });
@@ -55,13 +65,18 @@ function App() {
       setDisableFields(false)
       
     })
+
+    socket.current.on("serverId", (serverId) => {
+      setServerId(serverId)
+      
+    })
     //!NOTE return a callback function that closes the websocket
   }, [])
   
 
   return (
     <div className="App" style={page_style}>
-
+      <header style={header_component_style}>This form is connected to the server : {serverId}</header>
       {formFields.map((field, index) => {
         if (field.type === "textfield") {
           return (
