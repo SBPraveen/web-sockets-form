@@ -1,8 +1,8 @@
 import config from "../config";
 import Hapi from "@hapi/hapi"
 import health from "./routes/health";
-import SocketIO from "socket.io"
-import webSocket from "./routes/webSocket";
+import { WebSocketServer } from 'ws';
+import webSocketRoute from "./routes/webSocket";
 
 const initHttp = async () => {
     const server = Hapi.server({
@@ -15,21 +15,34 @@ const initHttp = async () => {
         }
     })
 
-    //web socket
-    const io = SocketIO(server.listener, {
-        cors: {
-            origin: ["*"],
-          methods: ["GET", "POST"]
-        }
-      })
-
-      webSocket(io, server.info.id)
-
     //http routes
     server.route(health)
 
     await server.start()
-    console.log(`Server running on ${server.info.uri} and server id is ${server.info.id}`)
+    
+
+    const wss = new WebSocketServer({server: server.listener});
+
+
+wss.on('connection', function connection(ws) {
+    ws.on('error', console.error);
+    ws.send(JSON.stringify({eventName:"serverId", eventData:server.info.id}))
+  
+    ws.on('message', function message(data) {
+        data = JSON.parse(data.toString())
+      console.log('received:', data);
+      console.log(data.eventName, data.eventName === "invoiceValue");
+      if(data.eventName === "invoiceValue"){
+        const temp = {eventName:"freightValue", eventData:"21"}
+        console.log("temp", temp);
+        ws.send(JSON.stringify(temp))
+      }
+    });
+  
+    
+  });
+
+  console.log(`Server running on ${server.info.uri} and server id is ${server.info.id}.`)
 }
 
 process.on('unhandledRejection', (err) => {
@@ -38,3 +51,4 @@ process.on('unhandledRejection', (err) => {
 })
 
 initHttp()
+

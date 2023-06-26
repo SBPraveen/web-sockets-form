@@ -1,7 +1,7 @@
-import io from 'socket.io-client';
 import { useState, useEffect, useRef } from 'react'
-import TextField from './TextField';
-//  import formFields  from './formFieldsLoadTest'
+import TextField from './components/TextField';
+//  import formFields  from './data/formFieldsLoadTest'
+ import initiateWebsocket from './utilityFunctions/initiateWebsocket';
 
 const formFields = [{ fieldKey: "invoiceValue", type: "textfield", fieldName: "Invoice value" }, { fieldKey: "freightValue", type: "textfield", fieldName: "Freight value" }, { fieldKey: "insuranceValue", type: "textfield", fieldName: "Insurance value" }]
 
@@ -47,29 +47,17 @@ const header_component_style = {
 function App() {
   
   //!Check disable is working when websocket connection is lost
-  const [disableFields, setDisableFields] = useState(true)
+  const [isWebSocketAlive, setIsWebSocketAlive] = useState(false)
   const [serverId, setServerId] = useState("")
 
   const jobId = "1234ASDF1234"
   const invoiceId = "1111"
 
-  let socket = useRef(null);
+  let ws = useRef(null);
   useEffect(() => {
-    socket.current = io(process.env.REACT_APP_API_URL, {
-      transports: ["websocket"],
-      autoConnect: false
-    });
-    socket.current.connect()
-    socket.current.on("connect", () => {
-      socket.current.emit('join', `${jobId}#${invoiceId}`);
-      setDisableFields(false)
-      
-    })
-
-    socket.current.on("serverId", (serverId) => {
-      setServerId(serverId)
-      
-    })
+    if(!ws.current){
+      initiateWebsocket(ws, jobId, invoiceId, setIsWebSocketAlive, setServerId)
+    }
     //!NOTE return a callback function that closes the websocket
   }, [])
   
@@ -82,7 +70,7 @@ function App() {
           return (
             <div style={form_component_style} key={index}>
               <label style={label_component_style} key={field.fieldKey + "label"}>{field.fieldName}</label>
-              <TextField  key={field.fieldKey} id={field.fieldKey} socket={socket} jobId={jobId} invoiceId={invoiceId} disableFields={disableFields} fieldKey={field.fieldKey}></TextField>
+              <TextField  key={field.fieldKey} id={field.fieldKey} ws={ws} jobId={jobId} invoiceId={invoiceId} isWebSocketAlive={isWebSocketAlive} fieldKey={field.fieldKey}></TextField>
             </div>
           )
         }
