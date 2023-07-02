@@ -3,7 +3,6 @@ import Hapi from "@hapi/hapi"
 import health from "./routes/health";
 import { WebSocketServer } from 'ws';
 import webSocketRoute from "./routes/webSocket";
-import initiateRedis from "./app/initiateRedis";
 
 
 const initHttp = async () => {
@@ -29,7 +28,6 @@ const initHttp = async () => {
         this.isAlive = true;
     }
 
-    let redis = initiateRedis()
 
     let sessionStore = new Map()
 
@@ -37,7 +35,7 @@ const initHttp = async () => {
         ws.isAlive = true;
         ws.on('error', console.error);
         ws.send(JSON.stringify({ eventName: "serverId", eventData: server.info.id }))
-        webSocketRoute(ws, server.info.id, sessionStore, redis)
+        webSocketRoute(ws, server.info.id, sessionStore)
         ws.on('pong', heartbeat);
 
     });

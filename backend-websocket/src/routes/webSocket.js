@@ -11,7 +11,7 @@ const stopRedisServer = async (redis) => {
   await redis.quit()
 }
 
-const webSocketRoute = (ws, serverId, sessionStore, redis) => {
+const webSocketRoute = (ws, serverId, sessionStore) => {
   ws.on('message', function message(data) {
     //data received is in the form of a buffer so added data.toString()
     data = JSON.parse(data.toString())
@@ -26,8 +26,9 @@ const webSocketRoute = (ws, serverId, sessionStore, redis) => {
   });
   ws.on("close", function () {
     console.log("closed");
-
-    // stopRedisServer(redis)
+    let clients = sessionStore.get(ws.pageId)
+    delete clients[ws.sessionId]
+    console.log(ws.sessionId, " ", "has closed the connection");   
   });
 
 

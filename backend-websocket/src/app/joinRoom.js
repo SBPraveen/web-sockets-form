@@ -2,10 +2,12 @@ import { uuid } from 'uuidv4';
 
 const joinRoom = (ws, data, sessionStore, serverId) => {
     const { userId, jobId, invId, timeStamp } = data.eventData
+    const pageId = jobId + "#" + invId
+    
     const SESSION_ID = uuid()
     ws.sessionId = SESSION_ID
     ws.userId = userId
-    const pageId = jobId + "#" + invId
+    ws.pageId = pageId
 
     let clients = sessionStore.get(pageId)
     clients = clients ? clients : {}
