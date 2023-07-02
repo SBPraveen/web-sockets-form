@@ -4,7 +4,7 @@ dotEnv.config()
 
 module.exports = {
     httpServerconfig:{
-        listenPort: 8080,
+        listenPort: 1111,
         listenHost: "0.0.0.0"
     },
     kafkaUrl:process.env.KAFKA,

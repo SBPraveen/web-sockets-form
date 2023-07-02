@@ -10,7 +10,7 @@ const eventMapper = {
 
 
 
-const webSocketRoute = (ws, serverId, sessionStore, redisClient) => {
+const webSocketRoute = (ws, serverId, sessionStoreWss, redisClient, sesssionStoreRedis) => {
   ws.on('message', function message(data) {
     //data received is in the form of a buffer so added data.toString()
     data = JSON.parse(data.toString())
@@ -18,28 +18,31 @@ const webSocketRoute = (ws, serverId, sessionStore, redisClient) => {
     //Publish the received message to other ec2 instances using redis pubsub
     redisPublisher(redisClient, data, serverId)
 
+    const params = {ws, data, sessionStoreWss, serverId, redisClient, sesssionStoreRedis}
+
     if (eventMapper[data.eventName]) {
-      eventMapper[data.eventName](ws, data, sessionStore, serverId, redisClient)
+      eventMapper[data.eventName](params)
     }
     else {
-      eventMapper.broadcast(ws, data, sessionStore, serverId, redisClient)
+      eventMapper.broadcast(params)
     }
 
   });
   ws.on("close", function () {
-    let clients = sessionStore.get(ws.pageId)
+    let clients = sessionStoreWss.get(ws.pageId)
     if(clients && Object.keys(clients).length === 1){
-      //remove from sessionStore the pageId as there was just one user and that user has also left
-      sessionStore.delete(ws.pageId)
+      //remove from sessionStoreWss the pageId as there was just one user and that user has also left
+      sessionStoreWss.delete(ws.pageId)
+      console.log("Removed the page Id from session store wss" );
       // unsubscribe from the redis channel
-      // redisUnsubscriber(ws,pageId)
-      console.log("Removed the page Id from session store",sessionStore );
+      redisUnsubscriber(ws, sesssionStoreRedis)
+      
     }
     else{
-      const tempClients = JSON.parse(JSON.stringify(clients))
-      delete tempClients[ws.sessionId]
-      sessionStore.set(ws.pageId, tempClients)
-      console.log("Removed the just the client",sessionStore );
+      //Note dont do JSON.parse(JSON.stringify()) to the websocket connection object as it corrupts the object
+      delete clients[ws.sessionId]
+      sessionStoreWss.set(ws.pageId, clients)
+      console.log("Removed the just the client from the session store wss", ws.sessionId );
     }
     console.log(ws.sessionId, " ", "has closed the connection");   
   });

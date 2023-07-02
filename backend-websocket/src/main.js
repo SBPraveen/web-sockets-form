@@ -27,14 +27,16 @@ const initHttp = async () => {
         this.isAlive = true;
     }
 
-    let sessionStore = new Map()
+    //Note dont do JSON.parse(JSON.stringify()) to the websocket connection object/ redis connection objects stored in sessionStoreWss/sesssionStoreRedis as it corrupts the object
+    let sessionStoreWss = new Map()
+    let sesssionStoreRedis = new Map()
     const redisClient = await createRedisClient()
 
     wss.on('connection', function connection(ws) {
         ws.isAlive = true;
         ws.on('error', console.error);
         ws.send(JSON.stringify({ eventName: "serverId", eventData: server.info.id }))
-        webSocketRoute(ws, server.info.id, sessionStore, redisClient)
+        webSocketRoute(ws, server.info.id, sessionStoreWss, redisClient, sesssionStoreRedis)
         ws.on('pong', heartbeat);
 
     });

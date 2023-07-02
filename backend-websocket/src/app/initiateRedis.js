@@ -4,7 +4,7 @@ const createRedisClient = async () => {
     let redisClient
     try {
         redisClient = createClient();
-        redisClient.on('error', err => console.log('Redis Client Error', err));
+        redisClient.on('error', err => console.log('Redis Client Connection Error => createRedisClient => ', err));
         await redisClient.connect();
     }
     catch (e) {
@@ -13,11 +13,13 @@ const createRedisClient = async () => {
     return redisClient
 }
 
-const createSubscriber = async(redisClient, pageId, broadcast) => {
+const createSubscriber = async(redisClient, pageId, sesssionStoreRedis, broadcast) => {
     const tempRedisClient = redisClient.duplicate();
-    tempRedisClient.on('error', err => console.error(err));
+    tempRedisClient.on('error', err => console.error('Redis Client Connection Error => createSubscriber => ', err));
     await tempRedisClient.connect();
     await tempRedisClient.subscribe(pageId, (message) => broadcast(message));
+    sesssionStoreRedis.set(pageId, tempRedisClient)
+    console.log(`Size of the sesssionStoreRedis afer adding a new client`, sesssionStoreRedis.size);
 }
 
 const redisPublisher = async(redisClient, data, serverId) => {
@@ -27,8 +29,12 @@ const redisPublisher = async(redisClient, data, serverId) => {
     await redisClient.publish(pageId, JSON.stringify(data));
 }
 
-const redisUnsubscriber = async(redisClient, pageId) => {
-    await redisClient.unsubscribe(pageId);
+const redisUnsubscriber = async(ws, sesssionStoreRedis) => {
+    const redisClient = sesssionStoreRedis.get(ws.pageId)
+    await redisClient.unsubscribe(ws.pageId)
+    await redisClient.quit()
+    sesssionStoreRedis.delete(ws.pageId)  
+    console.log(`Size of the sesssionStoreRedis after unsubscribing form the page id => ${ws.pageId}`, sesssionStoreRedis.size)
 }
 
 
