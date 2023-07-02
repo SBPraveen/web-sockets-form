@@ -3,7 +3,7 @@ import Hapi from "@hapi/hapi"
 import health from "./routes/health";
 import { WebSocketServer } from 'ws';
 import webSocketRoute from "./routes/webSocket";
-
+import {createRedisClient} from "./app/initiateRedis";
 
 const initHttp = async () => {
     const server = Hapi.server({
@@ -21,21 +21,20 @@ const initHttp = async () => {
 
     await server.start()
 
-
     const wss = new WebSocketServer({ server: server.listener });
 
     function heartbeat() {
         this.isAlive = true;
     }
 
-
     let sessionStore = new Map()
+    const redisClient = await createRedisClient()
 
     wss.on('connection', function connection(ws) {
         ws.isAlive = true;
         ws.on('error', console.error);
         ws.send(JSON.stringify({ eventName: "serverId", eventData: server.info.id }))
-        webSocketRoute(ws, server.info.id, sessionStore)
+        webSocketRoute(ws, server.info.id, sessionStore, redisClient)
         ws.on('pong', heartbeat);
 
     });
@@ -52,8 +51,14 @@ const initHttp = async () => {
         });
     }, 5 * 60 * 1000);
 
+    const stopRedis = async (redisClient) => {
+        await redisClient.unsubscribe();
+        await redisClient.quit()
+      }
+
     wss.on('close', function close() {
         clearInterval(heartBeat);
+        stopRedis(redisClient)
     });
 
     console.log(`Server running on ${server.info.uri} and server id is ${server.info.id}.`)

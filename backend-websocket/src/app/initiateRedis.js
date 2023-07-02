@@ -1,16 +1,35 @@
 import { createClient } from 'redis';
 
-const initiateRedis = async () => {
-    let redis
+const createRedisClient = async () => {
+    let redisClient
     try {
-        redis = createClient();
-        redis.on('error', err => console.log('Redis Client Error', err));
-        await redis.connect();
+        redisClient = createClient();
+        redisClient.on('error', err => console.log('Redis Client Error', err));
+        await redisClient.connect();
     }
     catch (e) {
         console.log(e)
     }
-    return redis
+    return redisClient
 }
 
-export default initiateRedis
+const createSubscriber = async(redisClient, pageId, broadcast) => {
+    const tempRedisClient = redisClient.duplicate();
+    tempRedisClient.on('error', err => console.error(err));
+    await tempRedisClient.connect();
+    await tempRedisClient.subscribe(pageId, (message) => broadcast(message));
+}
+
+const redisPublisher = async(redisClient, data, serverId) => {
+    const {jobId, invId} = data.eventData
+    const pageId = jobId + "#" + invId
+    data.serverId = serverId
+    await redisClient.publish(pageId, JSON.stringify(data));
+}
+
+const redisUnsubscriber = async(redisClient, pageId) => {
+    await redisClient.unsubscribe(pageId);
+}
+
+
+export {createRedisClient, createSubscriber, redisPublisher, redisUnsubscriber}
