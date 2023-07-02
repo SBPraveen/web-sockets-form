@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import eventBus from '../utilityFunctions/eventBus'
 
-const TextField = ({ws, jobId, invoiceId, isWebSocketAlive, fieldKey}) => {
+const TextField = ({ws, jobId, invoiceId, isWebSocketAlive, fieldKey, userId}) => {
 
     const [data, setData] = useState("")
     
 
     useEffect(()=>{
-      eventBus.subscribeToEvent(fieldKey,(data) => setData(data.eventData))
+      eventBus.subscribeToEvent(fieldKey,(data) => {
+        setData(data.eventData.changedValue)})
       return () => {
         eventBus.removeEventSubscription(fieldKey)
       }
-    },[])
+    },[fieldKey])
     
 
     const handleChange = (e) => {
         setData(e.target.value)
         try{
           const currentTime = new Date()
-          const message = { jobId: jobId, invId:invoiceId,timeStamp: currentTime.toString(), user:"Sb", initialValue: data, changedValue:e.target.value, field:fieldKey }
+          const message = { jobId: jobId, invId:invoiceId,timeStamp: currentTime.toString(), userId:userId, initialValue: data, changedValue:e.target.value, field:fieldKey }
           const payload = {
             eventName:fieldKey,
             eventData:message

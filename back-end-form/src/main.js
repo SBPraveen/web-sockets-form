@@ -3,14 +3,16 @@ import Hapi from "@hapi/hapi"
 import health from "./routes/health";
 import { WebSocketServer } from 'ws';
 import webSocketRoute from "./routes/webSocket";
+import initiateRedis from "./app/initiateRedis";
+
 
 const initHttp = async () => {
     const server = Hapi.server({
-        port : config.httpServerconfig.listenPort,
+        port: config.httpServerconfig.listenPort,
         host: config.httpServerconfig.listenHost,
-        routes:{
-            cors:{
-                origin:["*"]
+        routes: {
+            cors: {
+                origin: ["*"]
             }
         }
     })
@@ -19,30 +21,44 @@ const initHttp = async () => {
     server.route(health)
 
     await server.start()
-    
-
-    const wss = new WebSocketServer({server: server.listener});
 
 
-wss.on('connection', function connection(ws) {
-    ws.on('error', console.error);
-    ws.send(JSON.stringify({eventName:"serverId", eventData:server.info.id}))
-  
-    ws.on('message', function message(data) {
-        data = JSON.parse(data.toString())
-      console.log('received:', data);
-      console.log(data.eventName, data.eventName === "invoiceValue");
-      if(data.eventName === "invoiceValue"){
-        const temp = {eventName:"freightValue", eventData:"21"}
-        console.log("temp", temp);
-        ws.send(JSON.stringify(temp))
-      }
+    const wss = new WebSocketServer({ server: server.listener });
+
+    function heartbeat() {
+        this.isAlive = true;
+    }
+
+    let redis = initiateRedis()
+
+    let sessionStore = new Map()
+
+    wss.on('connection', function connection(ws) {
+        ws.isAlive = true;
+        ws.on('error', console.error);
+        ws.send(JSON.stringify({ eventName: "serverId", eventData: server.info.id }))
+        webSocketRoute(ws, server.info.id, sessionStore, redis)
+        ws.on('pong', heartbeat);
+
     });
-  
-    
-  });
 
-  console.log(`Server running on ${server.info.uri} and server id is ${server.info.id}.`)
+
+    //Server side heart beat will be emitted every 5 mins
+    const heartBeat = setInterval(function ping() {
+        wss.clients.forEach(function each(ws) {
+            if (ws.isAlive === false) {
+                return ws.terminate();
+            }
+            ws.isAlive = false;
+            ws.ping();
+        });
+    }, 5 * 60 * 1000);
+
+    wss.on('close', function close() {
+        clearInterval(heartBeat);
+    });
+
+    console.log(`Server running on ${server.info.uri} and server id is ${server.info.id}.`)
 }
 
 process.on('unhandledRejection', (err) => {
@@ -51,4 +67,3 @@ process.on('unhandledRejection', (err) => {
 })
 
 initHttp()
-
