@@ -43,8 +43,12 @@ http {
    3. sudo systemctl restart nginx
 
 
-# Redis server
-Start redis server => ```redis-server``` (or) ```redis-server --port 6380 --slaveof 127.0.0.1 6379``` (if 6379 is occupied) 
+## Redis server
+Install redis => ```sudo snap install redis```  
+Start redis server => ```sudo snap start redis```   
+Stop redis server => ```sudo snap stop redis```  
+
+(or) ```redis-server --port 6380 --slaveof 127.0.0.1 6379``` (if 6379 is occupied) 
 (or) 6379 was made free using the following command```/etc/init.d/redis-server stop```
   
 Can't handle RDB format version 10
@@ -53,4 +57,13 @@ The following error was solved using the below command
 ```sudo find / -name *.rdb```
 Remove all the dump files returned from the above command
 ```sudo rm /home/praveen/dump.rdb```
+
+## Kafka setup
+[Install kafka Ubuntu](https://www.conduktor.io/kafka/how-to-install-apache-kafka-on-linux-without-zookeeper-kraft-mode/)  
+Start Kafka in the Kraft mode(Replace the kafka version with the version installed in your laptop)  
+ - ```kafka-storage.sh random-uuid```  
+ - ```kafka-storage.sh format -t <uuid> -c ~/kafka_2.13-3.4.1/config/kraft/server.properties```  
+ - ```kafka-server-start.sh ~/kafka_2.13-3.4.1/config/kraft/server.properties```
+
+
  
