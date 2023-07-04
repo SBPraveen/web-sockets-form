@@ -1,21 +1,20 @@
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid'
 import { createSubscriber } from "./initiateRedis"
 import broadcast from './broadcast';
 
 const joinRoom = ({ ws, data, sessionStoreWss, serverId, redisClient, sesssionStoreRedis }) => {
-    const { userId, jobId, invId, timeStamp } = data.eventData
-    const pageId = jobId + "#" + invId
+    const { userId, jobId, timeStamp } = data.eventData
 
-    const SESSION_ID = uuid()
+    const SESSION_ID = uuidv4()
     ws.sessionId = SESSION_ID
     ws.userId = userId
-    ws.pageId = pageId
+    ws.jobId = jobId
 
-    let clients = sessionStoreWss.get(pageId)
+    let clients = sessionStoreWss.get(jobId)
 
     if (!clients) {
         clients = {}
-        //If the current user is the first user(in this instance) for the pageId ie. clients = undefined, then create a new redis subscriber. 
+        //If the current user is the first user(in this instance) for the jobId ie. clients = undefined, then create a new redis subscriber. 
         const subscriberCallback = (data) => {
             data = JSON.parse(data)
             if (data.serverId !== serverId) {
@@ -23,11 +22,11 @@ const joinRoom = ({ ws, data, sessionStoreWss, serverId, redisClient, sesssionSt
                 broadcast({ data, sessionStoreWss})
             }
         }
-        createSubscriber(redisClient, pageId, sesssionStoreRedis, (redisData) => subscriberCallback(redisData))
+        createSubscriber(redisClient, jobId, sesssionStoreRedis, (redisData) => subscriberCallback(redisData))
     }
 
     let updatedClients = { ...clients, [SESSION_ID]: ws }
-    sessionStoreWss.set(pageId, updatedClients)
+    sessionStoreWss.set(jobId, updatedClients)
 
 }
 export default joinRoom

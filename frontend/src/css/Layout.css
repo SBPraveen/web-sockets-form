@@ -1,0 +1,28 @@
+.header{
+    width: 100vw;
+    height: 5vh;
+    margin-top: 0vh;
+    border-bottom: 1px solid black;
+    display: flex;
+    align-items: center;
+    padding-left: 2em;
+}
+.body{
+    width: 100vw;
+    height: 92vh;
+    margin-top: 0vh;
+    box-sizing: border-box;
+}
+.footer{
+    width: 100vw;
+    height: 3vh;
+    margin-top: 0vh;
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    align-items: center;
+}
+
+p{
+    margin: 0;
+}

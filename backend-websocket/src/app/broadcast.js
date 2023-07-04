@@ -1,12 +1,11 @@
 const broadcast = ({ data, sessionStoreWss }) => {
     if (data && data.eventData) {
-        const { jobId, invId } = data.eventData
-        const pageId = jobId + "#" + invId
-        if (!sessionStoreWss.has(pageId)) {
-            console.log("Redis does not have pageId => ", pageId);
+        const { jobId } = data.eventData
+        if (!sessionStoreWss.has(jobId)) {
+            console.log("Redis does not have jobId => ", jobId);
             return ""
         }
-        let clients = sessionStoreWss.get(pageId)
+        let clients = sessionStoreWss.get(jobId)
         const sessionIds = Object.keys(clients)
         console.log("Broadcating to ", sessionIds.length, " clients", sessionIds)
         sessionIds.forEach((sessionId) => {

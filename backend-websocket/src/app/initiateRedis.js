@@ -13,28 +13,27 @@ const createRedisClient = async () => {
     return redisClient
 }
 
-const createSubscriber = async(redisClient, pageId, sesssionStoreRedis, broadcast) => {
+const createSubscriber = async(redisClient, jobId, sesssionStoreRedis, broadcast) => {
     const tempRedisClient = redisClient.duplicate();
     tempRedisClient.on('error', err => console.error('Redis Client Connection Error => createSubscriber => ', err));
     await tempRedisClient.connect();
-    await tempRedisClient.subscribe(pageId, (message) => broadcast(message));
-    sesssionStoreRedis.set(pageId, tempRedisClient)
+    await tempRedisClient.subscribe(jobId, (message) => broadcast(message));
+    sesssionStoreRedis.set(jobId, tempRedisClient)
     console.log(`Size of the sesssionStoreRedis afer adding a new client`, sesssionStoreRedis.size);
 }
 
 const redisPublisher = async(redisClient, data, serverId) => {
-    const {jobId, invId} = data.eventData
-    const pageId = jobId + "#" + invId
+    const {jobId} = data.eventData
     data.serverId = serverId
-    await redisClient.publish(pageId, JSON.stringify(data));
+    await redisClient.publish(jobId, JSON.stringify(data));
 }
 
 const redisUnsubscriber = async(ws, sesssionStoreRedis) => {
-    const redisClient = sesssionStoreRedis.get(ws.pageId)
-    await redisClient.unsubscribe(ws.pageId)
+    const redisClient = sesssionStoreRedis.get(ws.jobId)
+    await redisClient.unsubscribe(ws.jobId)
     await redisClient.quit()
-    sesssionStoreRedis.delete(ws.pageId)  
-    console.log(`Size of the sesssionStoreRedis after unsubscribing form the page id => ${ws.pageId}`, sesssionStoreRedis.size)
+    sesssionStoreRedis.delete(ws.jobId)  
+    console.log(`Size of the sesssionStoreRedis after unsubscribing form the page id => ${ws.jobId}`, sesssionStoreRedis.size)
 }
 
 

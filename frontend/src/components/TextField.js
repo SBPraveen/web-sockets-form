@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import eventBus from '../utilityFunctions/eventBus'
 
-const TextField = ({ws, jobId, invoiceId, isWebSocketAlive, fieldKey, userId}) => {
+const TextField = ({ws, jobId, isWebSocketAlive, fieldKey, userId}) => {
 
     const [data, setData] = useState("")
     
@@ -19,7 +19,7 @@ const TextField = ({ws, jobId, invoiceId, isWebSocketAlive, fieldKey, userId}) =
         setData(e.target.value)
         try{
           const currentTime = new Date()
-          const message = { jobId: jobId, invId:invoiceId,timeStamp: currentTime.toString(), userId:userId, initialValue: data, changedValue:e.target.value, field:fieldKey }
+          const message = { jobId: jobId, timeStamp: currentTime.toString(), userId:userId, initialValue: data, changedValue:e.target.value, field:fieldKey }
           const payload = {
             eventName:fieldKey,
             eventData:message

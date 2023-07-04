@@ -4,7 +4,7 @@ const maxHeartBeatRequests = 10
 let noOfHeartBeatRequests = 0
 let webSocketHeartBeat
 
-const initiateWebSockets = (ws, jobId, invoiceId, setIsWebSocketAlive, setServerId, USER_ID) => {
+const initiateWebSockets = (ws, jobId, setIsWebSocketAlive, setServerId, USER_ID) => {
 
   ws.current = new WebSocket(process.env.REACT_APP_API_URL);
 
@@ -16,7 +16,7 @@ const initiateWebSockets = (ws, jobId, invoiceId, setIsWebSocketAlive, setServer
     webSocketHeartBeat = false
 
     //join room
-    const message = { jobId: jobId, invId:invoiceId,timeStamp: Date.now(), userId:USER_ID}
+    const message = { jobId: jobId,timeStamp: Date.now(), userId:USER_ID}
           const payload = {
             eventName:"joinRoom",
             eventData:message
@@ -39,7 +39,7 @@ const initiateWebSockets = (ws, jobId, invoiceId, setIsWebSocketAlive, setServer
     if(noOfHeartBeatRequests === 0) {
       //The first request(heart beat) has to go immediately then for every 3 seconds the heart beat will be sent until the  noOfHeartBeatRequests < maxHeartBeatRequests
       noOfHeartBeatRequests = noOfHeartBeatRequests + 1
-      initiateWebSockets(ws, jobId, invoiceId, setIsWebSocketAlive, setServerId, USER_ID)
+      initiateWebSockets(ws, jobId, setIsWebSocketAlive, setServerId, USER_ID)
     }
     if(!webSocketHeartBeat){
       webSocketHeartBeat = setInterval(() => {
@@ -48,7 +48,7 @@ const initiateWebSockets = (ws, jobId, invoiceId, setIsWebSocketAlive, setServer
           ws.current && ws.current.close()
           ws.current = null
           noOfHeartBeatRequests = noOfHeartBeatRequests + 1
-          initiateWebSockets(ws, jobId, invoiceId, setIsWebSocketAlive, setServerId, USER_ID)
+          initiateWebSockets(ws, jobId, setIsWebSocketAlive, setServerId, USER_ID)
           
         } 
       }, 3000);
