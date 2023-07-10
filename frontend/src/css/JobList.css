@@ -23,3 +23,7 @@ button {
     width: 15vw;
     height: 3vh;
 }
+
+.create-job-button{
+    min-height: 20px;
+}

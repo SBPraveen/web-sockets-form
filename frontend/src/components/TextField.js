@@ -1,40 +1,38 @@
 import React, { useEffect, useState } from 'react'
 import eventBus from '../utilityFunctions/eventBus'
+import "../css/TextField.css"
+import webSocketSendData from '../utilityFunctions/websocketSendData'
 
-const TextField = ({ws, jobId, isWebSocketAlive, fieldKey, userId}) => {
+const TextField = (props) => {
 
-    const [data, setData] = useState("")
-    
+  const { ws, jobId, isWebSocketAlive, fieldKey, userId } = props.propData
 
-    useEffect(()=>{
-      eventBus.subscribeToEvent(fieldKey,(data) => {
-        setData(data.eventData.changedValue)})
-      return () => {
-        eventBus.removeEventSubscription(fieldKey)
-      }
-    },[fieldKey])
-    
+  const [data, setData] = useState("")
 
-    const handleChange = (e) => {
-        setData(e.target.value)
-        try{
-          const currentTime = new Date()
-          const message = { jobId: jobId, timeStamp: currentTime.toString(), userId:userId, initialValue: data, changedValue:e.target.value, field:fieldKey }
-          const payload = {
-            eventName:fieldKey,
-            eventData:message
-          }
-          ws.current.send(JSON.stringify(payload) )
-        }
-        catch(e){
-            console.log(`Web socket error in the component ${fieldKey}`, e)
-        }
+
+  useEffect(() => {
+    eventBus.subscribeToEvent(fieldKey, (data) => {
+      setData(data.eventData.changedValue)
+    })
+    return () => {
+      eventBus.removeEventSubscription(fieldKey)
     }
+  }, [fieldKey])
+
+
+  const handleChange = (e) => {
+    setData(e.target.value)
+  }
+
+  const handleOnBlur = (e) => {
+    const wssData = { jobId: jobId, userId: userId, initialValue: data, changedValue: e.target.value, field: fieldKey, ws }
+    webSocketSendData(wssData)
+  }
 
   return (
-    <input onChange={handleChange} value={data} disabled={!isWebSocketAlive}/>
+    <input className='input' onBlur={handleOnBlur} onChange={handleChange} value={data} disabled={!isWebSocketAlive} />
   )
-  
+
 }
 
 export default TextField

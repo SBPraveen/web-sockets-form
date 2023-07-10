@@ -21,14 +21,14 @@ const JobList = () => {
     const handleCreateJob = () => {
         const currentTime = new Date()
         let tempTableData = JSON.parse(JSON.stringify(tableData))
-        tempTableData.unshift({ jobId: "Job-"+uuidv4(), createdBy: "yesBeee", createdOn: currentTime.toString() })
+        tempTableData.unshift({ jobId: "Job-" + uuidv4(), createdBy: "yesBeee", createdOn: currentTime.toString() })
         setTableData(tempTableData)
     }
     return (
-        <Layout header={"Job List"}>
+        <Layout header={"Job list"}>
             <div className="job-list-page">
                 <div className="section-1">
-                    <button onClick={handleCreateJob}>Create job</button>
+                    <button className="create-job-button" onClick={handleCreateJob}>Create job</button>
                 </div>
                 <div className="section-2">
                     <Table headers={tableHeaders} bodyData={tableData} />
