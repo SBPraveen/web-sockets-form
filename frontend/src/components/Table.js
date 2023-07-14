@@ -1,33 +1,61 @@
 import "../css/Table.css"
 import { Link } from "react-router-dom"
+import Checkbox from "./Checkbox"
+import TextField from "./TextField"
 
-const Table = ({ headers, bodyData }) => {
-    console.log("bodyData",bodyData)
+const Table = ({ headers, bodyData, propsData }) => {
+
     return (
-        <table>
-            <tr>
+        <table className="table-main">
+            <thead>
+                <tr>
+                    {
+                        headers.map((header) => (
+                            <th key={header.id}>{header.headerName}</th>
+                        )
+                        )
+                    }
+                </tr>
+            </thead>
+            <tbody>
                 {
-                    headers.map((header) => (
-                        <th key={header.id}>{header.headerName}</th>
-                    )
-                    )
+
+                    bodyData.map((body, rowIndex) => {
+
+                        return (
+                            <tr key={rowIndex}>
+                                {
+                                    headers.map((header, columnIndex) => {
+                                        let tableElement
+                                        if (header.type === "link") {
+                                            tableElement = <Link to={`/jobDetails/${body[header.id]}`}>{body[header.id]}</Link>
+                                        }
+                                        else if (header.type === "checkbox") {
+                                            tableElement = <Checkbox />
+                                        }
+                                        else if (header.type === "textfield") {
+                                            tableElement = <TextField propData={{...propsData,fieldKey: header.id + rowIndex + columnIndex}}/>
+                                        }
+                                        else if (header.type === "slNo") {
+                                            tableElement = rowIndex + 1
+                                        }
+                                        else {
+                                            tableElement = body[header.id]
+                                        }
+                                        return (
+                                            <th key={`${rowIndex}${columnIndex}`}>{tableElement}</th>
+                                        )
+                                    }
+
+                                    )
+                                }
+                            </tr>
+                        )
+                    })
+
                 }
-            </tr>
-            {
-                bodyData.map((body, rowIndex) => {
-                    return (
-                        <tr key={rowIndex}>
-                            {
-                                headers.map((header, columnIndex) => (
-                                    <th key={`${rowIndex}${columnIndex}`}>{header.type === "link" ? 
-                                    <Link to={`/jobDetails/${body[header.id]}`}>{body[header.id]}</Link> 
-                                    : body[header.id]}</th>
-                                ))
-                            }
-                        </tr>
-                    )
-                })
-            }
+            </tbody>
+
 
 
 

@@ -7,3 +7,6 @@ table, th, td {
     padding: 2vmin;
     font-weight: normal;
   }
+  .table-main{
+    width: 60%;
+  }

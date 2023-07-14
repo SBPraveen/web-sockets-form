@@ -17,3 +17,21 @@
     column-gap: 10vw;
     row-gap: 1.5vh;
 }
+
+
+
+.line-item-actions{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 2em;
+    padding-bottom: 1.5em;
+}
+
+.line-item-table{
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    max-height: 45vh;
+    overflow-y: auto;  
+}

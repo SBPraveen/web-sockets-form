@@ -3,13 +3,13 @@ import Layout from "./Layout"
 import { useState, useEffect, useRef } from 'react'
 import TextField from '../components/TextField';
 import Dropdown from "../components/Dropdown";
-import Table from "../components/Table";
+import LineItemTable from "../sections/LineItemTable";
 //  import formFields  from './data/formFieldsLoadTest'
 import formFields from "../data/formFields"
 import initiateWebSockets from '../utilityFunctions/initiateWebSockets'
 import "../css/JobDetails.css"
 
-const lineItemTableHeaders = [{ id: "slNo", headerName: "Sl. no." }, { id: "hsn", headerName: "HSN", type: "textfield" }, { id: "description", headerName: "Description", type: "textfield" }, { id: "qty", headerName: "Quantity", type: "textfield" }, { id: "unitPrice", headerName: "Unit price", type: "textfield" }, { id: "amount", headerName: "Amount", type: "textfield" }]
+
 
 const JobDetails = () => {
 
@@ -55,13 +55,7 @@ const JobDetails = () => {
                         </div>
                     )
                 })}
-                {/* <div>
-                    <div>
-                        <button>Copy values to all rows</button>
-                        <button>Add line items</button>
-                    </div>
-                    <Table headers={lineItemTableHeaders} bodyData={[]} />
-                </div> */}
+                <LineItemTable ws={ws} jobId={jobId} isWebSocketAlive={isWebSocketAlive}  userId={USER_ID}/>
             </div>
         </Layout>
 
