@@ -1,6 +1,6 @@
 import joinRoom from '../app/joinRoom';
 import broadcast from '../app/broadcast';
-import { redisPublisher, redisUnsubscriber } from '../app/initiateRedis';
+import { kafkaProduce } from '../app/kafka';
 
 // eventMapper maps the frontend event names to the functions written in this app. Eg: When the user emits "joinRoom" event then joinRoom function will be called
 const eventMapper = {
@@ -10,15 +10,13 @@ const eventMapper = {
 
 
 
-const webSocketRoute = (ws, serverId, sessionStoreWss, redisClient, sesssionStoreRedis) => {
+const webSocketRoute = (ws, serverId, sessionStoreWss) => {
   ws.on('message', function message(data) {
     //data received is in the form of a buffer so added data.toString()
+    data = data.toString()
+    kafkaProduce(data)
     data = JSON.parse(data.toString())
-
-    //Publish the received message to other ec2 instances using redis pubsub
-    redisPublisher(redisClient, data, serverId)
-
-    const params = {ws, data, sessionStoreWss, serverId, redisClient, sesssionStoreRedis}
+    const params = {ws, data, sessionStoreWss, serverId}
 
     if (eventMapper[data.eventName]) {
       eventMapper[data.eventName](params)
@@ -34,8 +32,7 @@ const webSocketRoute = (ws, serverId, sessionStoreWss, redisClient, sesssionStor
       //remove from sessionStoreWss the jobId as there was just one user and that user has also left
       sessionStoreWss.delete(ws.jobId)
       console.log("Removed the page Id from session store wss" );
-      // unsubscribe from the redis channel
-      redisUnsubscriber(ws, sesssionStoreRedis)
+      
       
     }
     else{

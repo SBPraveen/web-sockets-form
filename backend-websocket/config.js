@@ -8,5 +8,6 @@ module.exports = {
         listenHost: "0.0.0.0"
     },
     kafkaUrl:process.env.KAFKA,
-    redisUrl:process.env.REDIS
+    redisUrl:process.env.REDIS,
+    kafkaTopic:process.env.KAFKA_TOPIC
 }

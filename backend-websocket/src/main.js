@@ -3,7 +3,10 @@ import Hapi from "@hapi/hapi"
 import health from "./routes/health";
 import { WebSocketServer } from 'ws';
 import webSocketRoute from "./routes/webSocket";
-import {createRedisClient} from "./app/initiateRedis";
+// import { createRedisClient } from "./app/initiateRedis";
+import { kafkaInitiate } from "./app/kafka"
+const { Kafka } = require('kafkajs')
+
 
 const initHttp = async () => {
     const server = Hapi.server({
@@ -27,16 +30,14 @@ const initHttp = async () => {
         this.isAlive = true;
     }
 
-    //Note dont do JSON.parse(JSON.stringify()) to the websocket connection object/ redis connection objects stored in sessionStoreWss/sesssionStoreRedis as it corrupts the object
     let sessionStoreWss = new Map()
-    let sesssionStoreRedis = new Map()
-    const redisClient = await createRedisClient()
+    await kafkaInitiate(server.info.uri, sessionStoreWss)
 
     wss.on('connection', function connection(ws) {
         ws.isAlive = true;
         ws.on('error', console.error);
         ws.send(JSON.stringify({ eventName: "serverId", eventData: server.info.id }))
-        webSocketRoute(ws, server.info.id, sessionStoreWss, redisClient, sesssionStoreRedis)
+        webSocketRoute(ws, server.info.id, sessionStoreWss)
         ws.on('pong', heartbeat);
 
     });
@@ -56,7 +57,7 @@ const initHttp = async () => {
     const stopRedis = async (redisClient) => {
         await redisClient.unsubscribe();
         await redisClient.quit()
-      }
+    }
 
     wss.on('close', function close() {
         clearInterval(heartBeat);

@@ -64,6 +64,9 @@ Start Kafka in the Kraft mode(Replace the kafka version with the version install
  - ```kafka-storage.sh random-uuid```  
  - ```kafka-storage.sh format -t <uuid> -c ~/kafka_2.13-3.4.1/config/kraft/server.properties```  
  - ```kafka-server-start.sh ~/kafka_2.13-3.4.1/config/kraft/server.properties```
+ - ```kafka-topics.sh --bootstrap-server localhost:9092 --topic second_topic --create --partitions 3```
+ - ```kafka-console-producer.sh --bootstrap-server localhost:9092 --topic second_topic```
+ - ```kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic second_topic --group my-first-application```
 
 
  
