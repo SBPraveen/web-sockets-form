@@ -6,3 +6,26 @@
 .add-line-item-input{
     margin-left: 1em;
 }
+
+.copy-values-all-rows-dialog-body{
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    background: "red";
+    padding-top: 2em;
+}
+
+.copy-values-all-rows-input{
+    width: 40%;
+    margin-left: 1em;
+    max-width: 230px;
+}
+.copy-values-all-rows-checkbox{
+    margin-right: 0.5em;
+}
+.copy-values-all-rows-dialog-body div{
+    margin-bottom: 1.5em;
+}
+.copy-values-all-rows-dialog-body div:nth-last-child(1){
+    margin-bottom: 0em;
+}

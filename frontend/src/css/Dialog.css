@@ -1,8 +1,8 @@
 .dialog-box{
-    width:40vw;
+    width:30vw;
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: 30vw;
     transform: translate(-50%, -50%);
     border: none;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;

@@ -13,20 +13,20 @@ const LineItemTable = (props) => {
     const [tableData, setTableData] = useState([])
     const [noOfAddLineItems, setNoOfAddLineItems] = useState("")
 
-    const {ws, jobId, isWebSocketAlive,  userId} = props
+    const { ws, jobId, isWebSocketAlive, userId } = props
 
-    const tableProps = {ws, jobId, isWebSocketAlive,  userId}
+    const tableProps = { ws, jobId, isWebSocketAlive, userId }
 
     const dialogAddLineItems = () => {
         let tempTableData = JSON.parse(JSON.stringify(tableData))
         const newTableData = {
-            hsn:"1311",
-            description:"111",
-            qty:"434",
-            unitPrice:"234",
-            amount:"2341"
+            hsn: "1311",
+            description: "111",
+            qty: "434",
+            unitPrice: "234",
+            amount: "2341"
         }
-        for(let i=0; i<noOfAddLineItems; i++){
+        for (let i = 0; i < noOfAddLineItems; i++) {
             tempTableData.push(newTableData)
         }
         setTableData(tempTableData)
@@ -43,15 +43,28 @@ const LineItemTable = (props) => {
                 </div>
             </Dialog>
 
-            <Dialog isDialogBoxOpen={isCopyValues} setIsDialogBoxOpen={setIsCopyValues} headerName="Copy values to rows" />
-            <Dialog isDialogBoxOpen={isDeleteLineItems} setIsDialogBoxOpen={setIsDeleteLineItems} headerName="Delete line items"/>
+            <Dialog isDialogBoxOpen={isCopyValues} setIsDialogBoxOpen={setIsCopyValues} headerName="Copy values to rows">
+                <div className="copy-values-all-rows-dialog-body">
+                    {lineItemTableHeaders.map((header) => {
+                        if (header.headerName !== "" && header.headerName !== "Sl. no.")
+                            return (
+                                <div>
+                                    <input type="checkbox" className="copy-values-all-rows-checkbox"></input>
+                                    <label for={header.id}>{header.headerName}</label>
+                                    <input type="text" id={header.id} className="copy-values-all-rows-input"></input>
+                                </div>
+                            )
+                    })}
+                </div>
+            </Dialog>
+            <Dialog isDialogBoxOpen={isDeleteLineItems} setIsDialogBoxOpen={setIsDeleteLineItems} headerName="Delete line items" />
             <div className="line-item-actions">
                 <button onClick={() => setIsCopyValues(true)}>Copy values to rows</button>
                 <button onClick={() => setIsAddLineItems(true)}>Add line items</button>
                 <button onClick={() => setIsDeleteLineItems(true)}>Delete line items</button>
             </div>
             <div className="line-item-table">
-                <Table headers={lineItemTableHeaders} bodyData={tableData} propsData={tableProps}/>
+                <Table headers={lineItemTableHeaders} bodyData={tableData} propsData={tableProps} />
             </div>
         </div>
 
