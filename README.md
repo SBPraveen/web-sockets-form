@@ -64,10 +64,10 @@ Start Kafka in the Kraft mode(Replace the kafka version with the version install
  - ```kafka-storage.sh random-uuid```  
  - ```kafka-storage.sh format -t <uuid> -c ~/kafka_2.13-3.4.1/config/kraft/server.properties```  
  - ```kafka-server-start.sh ~/kafka_2.13-3.4.1/config/kraft/server.properties```
- - ```kafka-topics.sh --bootstrap-server localhost:9092 --topic second_topic --create --partitions 3```
- - ```kafka-console-producer.sh --bootstrap-server localhost:9092 --topic second_topic```
- - ```kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic second_topic --group my-first-application```
+ - ```kafka-topics.sh --bootstrap-server localhost:9092 --topic job_events --create --partitions 3```
+ - ```kafka-console-producer.sh --bootstrap-server localhost:9092 --topic job_events```
+ - ```kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic job_events --group my-first-application```
 
 
-
- 
+## Run Kafka connector
+```clear && connect-standalone.sh worker.properties redis-kafka-source.properties```
