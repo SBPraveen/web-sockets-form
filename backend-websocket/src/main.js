@@ -4,6 +4,7 @@ import health from "./routes/health";
 import { WebSocketServer } from 'ws';
 import webSocketRoute from "./routes/webSocket";
 import {createRedisClient} from "./app/initiateRedis";
+import {initiateKafka} from "./app/initiateKafka"
 
 const initHttp = async () => {
     const server = Hapi.server({
@@ -31,6 +32,7 @@ const initHttp = async () => {
     let sessionStoreWss = new Map()
     let sesssionStoreRedis = new Map()
     const redisClient = await createRedisClient()
+    initiateKafka(server.info.id)
 
     wss.on('connection', function connection(ws) {
         ws.isAlive = true;
