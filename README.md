@@ -6,10 +6,7 @@
    1. ```sudo chown <lowercase_linux_username> nginx``` => Eg : sudo chown praveen nginx
    2. ```sudo chown <lowercase_linux_username> nginx/nginx.conf```
 3. In the /etc/nginx/nginx.conf file remove all the contents and paste the below code [Websocket Nginx](https://www.nginx.com/blog/websocket-nginx/)
-4. Here my backend servers are running in port 8080 and have been mapped to 1111 and 2222 ports using the following commands
-   1. ```sudo docker build . -t web-sockets-backend-v2.0.1```
-   2. ```docker run -p 1111:8080 -it web-sockets-backend-v2.0.1```
-   3. ```docker run -p 2222:8080 -it web-sockets-backend-v2.0.1```
+
 ```
 http {
 
@@ -42,7 +39,10 @@ http {
    2. sudo systemctl stop nginx
    3. sudo systemctl restart nginx
 
-
+Here my backend servers are running in port 8080 and have been mapped to 1111 and 2222 ports using the following commands
+   1. ```sudo docker build . -t web-sockets-backend-v2.0.1```
+   2. ```docker run -p 1111:8080 -it web-sockets-backend-v2.0.1```
+   3. ```docker run -p 2222:8080 -it web-sockets-backend-v2.0.1```
 ## Redis server
 Install redis => ```sudo snap install redis```  
 Start redis server => ```sudo snap start redis```   
@@ -70,4 +70,4 @@ Start Kafka in the Kraft mode(Replace the kafka version with the version install
 
 
 ## Run Kafka connector
-```clear && connect-standalone.sh worker.properties redis-kafka-source.properties```
+```export CLASSPATH=/home/praveen/praveenUnifo/web-sockets-form/backend-kafka-redis-connector/lib/* && connect-standalone.sh worker.properties redis-kafka-source.properties```

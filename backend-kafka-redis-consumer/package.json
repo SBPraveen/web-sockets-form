@@ -1,0 +1,22 @@
+{
+  "name": "backend-kafka-redis-consumer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "RUNNING_ENV=local node ./lib/main.js",
+    "build": "./node_modules/.bin/babel src --out-dir lib --source-maps inline --copy-files"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.21.5",
+    "@babel/core": "^7.21.5",
+    "@babel/preset-env": "^7.21.5",
+    "@hapi/hapi": "^21.3.2",
+    "dotenv": "^16.0.3",
+    "kafkajs": "^2.2.4",
+    "redis": "^4.6.7",
+    "uuid": "^9.0.0"
+  }
+}
